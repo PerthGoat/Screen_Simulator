@@ -70,38 +70,40 @@ function drawImageOnCanvasRGB(ic) {
     GraphicsContext.ClearCanvas();
     var cycle = new Vector4(0, 0, 0, 255);
     var size = new Vector2(canvas.clientWidth, canvas.clientHeight);
-    var max_zoom = new Vector2(512, 512);
-    for (var y = 0; y < size.y; y += size.y / max_zoom.y) {
-        for (var x = 0; x < size.x; x += size.x / max_zoom.x) {
+    var render_res = new Vector2(512, 512);
+    // calculate x and y offset in relation to the canvas size
+    var ox = ic.width / size.x;
+    var oy = ic.height / size.y;
+    for (var y = 0; y < size.y; y += size.y / render_res.y) {
+        for (var x = 0; x < size.x; x += size.x / render_res.x) {
             if (x % 3 == 0) {
-                cycle.y = ic.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).y;
-                cycle.x = GraphicsContext.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).x;
-                cycle.z = GraphicsContext.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).z;
+                cycle.x = ic.GetPixelAt(new Vector2(Math.round(x * ox), Math.round(y * oy))).x;
+                cycle.z = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).z;
+                cycle.y = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).y;
             }
             else if (x % 3 == 1) {
-                cycle.z = ic.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).z;
-                cycle.y = GraphicsContext.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).y;
-                cycle.x = GraphicsContext.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).x;
+                cycle.y = ic.GetPixelAt(new Vector2(Math.round(x * ox), Math.round(y * oy))).y;
+                cycle.x = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).x;
+                cycle.z = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).z;
             }
             else if (x % 3 == 2) {
-                cycle.x = ic.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).x;
-                cycle.z = GraphicsContext.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).z;
-                cycle.y = GraphicsContext.GetPixelAt(new Vector2(Math.floor(x), Math.floor(y))).y;
+                cycle.z = ic.GetPixelAt(new Vector2(Math.round(x * ox), Math.round(y * oy))).z;
+                cycle.y = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).y;
+                cycle.x = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).x;
             }
-            GraphicsContext.PutPixel(new Vector2(x, y), cycle);
+            GraphicsContext.PutPixel(new Vector2(Math.round(x), Math.round(y)), cycle);
         }
     }
 }
-/*function updateCanvasRes(val : string) {
-    canvas.width = parseFloat(val);
-    canvas.height = parseFloat(val);
-    drawCanvasRGB();
+function updateCanvasRes(val) {
+    canvas.width = Math.pow(2, parseFloat(val));
+    canvas.height = Math.pow(2, parseFloat(val));
+    drawImageOnCanvasRGB(ImageContext);
 }
-
-function updateTextInput(val : string) {
-    (<HTMLInputElement>document.getElementById("ageOutputId")).value = val;
+function updateTextInput(val) {
+    document.getElementById("ageOutputId").value = val;
     updateCanvasRes(val);
-}*/
+}
 var canvas = document.getElementById("mainCanvas");
 var ctx = canvas.getContext("2d");
 var GraphicsContext = new gfx(ctx);
@@ -110,4 +112,3 @@ var imgBlobs = new Images();
 var ImageContext = new ImageBroker(imgBlobs.img1, function () {
     drawImageOnCanvasRGB(ImageContext);
 });
-//drawImageOnCanvasRGB();
