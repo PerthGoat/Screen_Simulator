@@ -3,17 +3,20 @@
 <html lang='en'>
 <head>
 	<style type='text/css'>
-		#mainCanvas {
-			border:1px solid black;
-			background-color:black;
-		}
+    #mainCanvas {
+      background-color:black;
+    }
+
+    canvas {
+      image-rendering:pixelated;
+    }
 	</style>
 </head>
 <body>
 	<label for="canvasZoom">Zoom:</label>
-	<input type="range" id="canvasZoom" min="1" max="10" value="8" oninput="updateTextInput(this.value);"/>
-	<output name="ageOutputName" id="ageOutputId">8</output><br/>
-	<canvas id="mainCanvas" width="256px" height="256px"></canvas>
+	<input type="range" id="canvasZoom" min="1" max="1024" value="768" oninput="updateTextInput(this.value);"/>
+	<output name="zoomOutputName" id="zoomOutputId">768</output><br/>
+	<canvas id="mainCanvas" width="768px" height="768px"></canvas>
 	<script type='text/javascript' src='js/main.js'></script>
 </body>
 </html>

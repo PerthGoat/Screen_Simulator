@@ -6,46 +6,69 @@ function drawImageOnCanvasRGB(ic : ImageBroker) {
 	
 	GraphicsContext.ClearCanvas();
 	
-	let cycle : Vector4 = new Vector4(0, 0, 0, 255);
-	
 	let size : Vector2 = new Vector2(canvas.clientWidth, canvas.clientHeight);
-	
-	let render_res : Vector2 = new Vector2(512, 512);
 	
 	// calculate x and y offset in relation to the canvas size
 	let ox : number = ic.width / size.x;
 	let oy : number = ic.height / size.y;
-	
-	for(let y : number = 0;y < size.y;y+=size.y / render_res.y) {
-		for(let x : number = 0;x < size.x;x+=size.x / render_res.x) {
-			
-			if(x % 3 == 0) { // red
-				cycle.x = ic.GetPixelAt(new Vector2(Math.round(x * ox), Math.round(y * oy))).x;
-				cycle.z = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).z;
-				cycle.y = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).y;
-			} else if(x % 3 == 1) { // green
-				cycle.y = ic.GetPixelAt(new Vector2(Math.round(x * ox), Math.round(y * oy))).y;
-				cycle.x = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).x;
-				cycle.z = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).z;
-			} else if(x % 3 == 2) { // blue
-				cycle.z = ic.GetPixelAt(new Vector2(Math.round(x * ox), Math.round(y * oy))).z;
-				cycle.y = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).y;
-				cycle.x = GraphicsContext.GetPixelAt(new Vector2(Math.round(x), Math.round(y))).x;
-			}
-			
-			GraphicsContext.PutPixel(new Vector2(Math.round(x), Math.round(y)), cycle);
-		}
-	}
+  
+  let x_scale : number = 1/ox; // pixels per cell in the canvas
+  let y_scale : number = 1/oy; // scale the y to 3x the normal size
+  
+  //console.log(ox, oy);
+  //console.log(x_scale, y_scale);
+  
+  let pixel_queue : number = 0;
+  
+  for(let y : number = 0;y < ic.height;y++) {
+    let placed_pixels : number = 0;
+    for(let x : number = 0;x < ic.width;x++) {
+      let cycle : Vector4 = ic.GetPixelAt(new Vector2(x, y));
+      
+      pixel_queue += x_scale;
+      
+      if(Math.floor(pixel_queue) >= 1) {
+        for(let i : number = 0;i < Math.floor(pixel_queue);i++) {
+          
+          switch(placed_pixels) {
+            case 0:
+              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(cycle.x, 0, 0, 255));
+              placed_pixels++;
+            break;
+            case 1:
+              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(0, cycle.y, 0, 255));
+              placed_pixels++;
+            break;
+            case 2:
+              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(0, 0, cycle.z, 255));
+              placed_pixels = 0;
+            break;
+          }
+          
+        }
+        
+        pixel_queue -= Math.floor(pixel_queue);
+      }
+      
+      
+    }
+  }
+  
+  GraphicsContext.FinishDrawing();
+  //console.log("DONE");
 }
 
 function updateCanvasRes(val : string) {
-	canvas.width = Math.pow(2, parseFloat(val));
-	canvas.height = Math.pow(2, parseFloat(val));
+	//canvas.width = Math.pow(2, parseFloat(val));
+	canvas.width = parseFloat(val);
+	//canvas.height = Math.pow(2, parseFloat(val));
+	canvas.height = parseFloat(val);
+  GraphicsContext.StartDrawing();
 	drawImageOnCanvasRGB(ImageContext);
 }
 
 function updateTextInput(val : string) {
-	(<HTMLInputElement>document.getElementById("ageOutputId")).value = val;
+	(<HTMLInputElement>document.getElementById("zoomOutputId")).value = val;
 	updateCanvasRes(val);
 }
 
@@ -55,10 +78,11 @@ let ctx : CanvasRenderingContext2D = canvas.getContext("2d");
 
 let GraphicsContext : gfx = new gfx(ctx);
 
-let img : HTMLImageElement = <HTMLImageElement>document.getElementById("the_image");
-
 let imgBlobs : Images = new Images();
 
 let ImageContext : ImageBroker = new ImageBroker(imgBlobs.img1, () => {
+  GraphicsContext.StartDrawing();
 	drawImageOnCanvasRGB(ImageContext);
+  //let val = (<HTMLInputElement>document.getElementById("zoomOutputId")).value;
+  //updateCanvasRes(val);
 });
