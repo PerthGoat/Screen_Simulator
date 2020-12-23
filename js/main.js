@@ -187,8 +187,6 @@ class ImageBroker {
                     this.Pixel_Array[x] = [];
                 }
                 this.Pixel_Array[x][y] = new Vector4(red, green, blue, 255);
-                //let new_pixel : Pixel = new Pixel(x, y, new Vector4(red, green, blue, 255)); // create a new pixel at x, y with the rgb defined above
-                //this.Pixel_Array.push(new_pixel);
             }
         }
     }
@@ -215,6 +213,7 @@ function drawImageOnCanvasRGB(ic) {
     let oy = ic.height / size.y;
     let x_scale = 1 / ox; // pixels per cell in the canvas
     let y_scale = 1 / oy; // scale the y to 3x the normal size
+    console.log(x_scale);
     //console.log(ox, oy);
     //console.log(x_scale, y_scale);
     let pixel_queue = 0;
@@ -224,21 +223,19 @@ function drawImageOnCanvasRGB(ic) {
             let cycle = ic.GetPixelAt(new Vector2(x, y));
             pixel_queue += x_scale;
             if (Math.floor(pixel_queue) >= 1) {
-                for (let i = 0; i < Math.floor(pixel_queue); i++) {
-                    switch (placed_pixels) {
-                        case 0:
-                            GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(cycle.x, 0, 0, 255));
-                            placed_pixels++;
-                            break;
-                        case 1:
-                            GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(0, cycle.y, 0, 255));
-                            placed_pixels++;
-                            break;
-                        case 2:
-                            GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(0, 0, cycle.z, 255));
-                            placed_pixels = 0;
-                            break;
-                    }
+                switch (placed_pixels) {
+                    case 0:
+                        GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale), Math.floor(y * y_scale)), new Vector4(cycle.x, 0, 0, 255));
+                        placed_pixels++;
+                        break;
+                    case 1:
+                        GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale), Math.floor(y * y_scale)), new Vector4(0, cycle.y, 0, 255));
+                        placed_pixels++;
+                        break;
+                    case 2:
+                        GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale), Math.floor(y * y_scale)), new Vector4(0, 0, cycle.z, 255));
+                        placed_pixels = 0;
+                        break;
                 }
                 pixel_queue -= Math.floor(pixel_queue);
             }
@@ -273,7 +270,7 @@ function load_texture_by_name(name) {
     let texture_decompressed = DEFLATE2.DECOMPRESS(full_texture_text_split[1]);
     return [texture_width, texture_height, texture_decompressed];
 }
-let loaded_texture = load_texture_by_name('kingpenguin');
+let loaded_texture = load_texture_by_name('IMG_0178');
 console.log(loaded_texture);
 console.log(loaded_texture[2].length);
 let canvas = document.getElementById("mainCanvas");

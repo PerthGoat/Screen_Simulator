@@ -18,6 +18,8 @@ function drawImageOnCanvasRGB(ic : ImageBroker) {
   let x_scale : number = 1/ox; // pixels per cell in the canvas
   let y_scale : number = 1/oy; // scale the y to 3x the normal size
   
+  console.log(x_scale);
+  
   //console.log(ox, oy);
   //console.log(x_scale, y_scale);
   
@@ -31,24 +33,21 @@ function drawImageOnCanvasRGB(ic : ImageBroker) {
       pixel_queue += x_scale;
       
       if(Math.floor(pixel_queue) >= 1) {
-        for(let i : number = 0;i < Math.floor(pixel_queue);i++) {
-          
           switch(placed_pixels) {
             case 0:
-              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(cycle.x, 0, 0, 255));
+              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale), Math.floor(y * y_scale)), new Vector4(cycle.x, 0, 0, 255));
               placed_pixels++;
             break;
             case 1:
-              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(0, cycle.y, 0, 255));
+              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale), Math.floor(y * y_scale)), new Vector4(0, cycle.y, 0, 255));
               placed_pixels++;
             break;
             case 2:
-              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale + placed_pixels), Math.floor(y * y_scale)), new Vector4(0, 0, cycle.z, 255));
+              GraphicsContext.PutPixel(new Vector2(Math.floor(x * x_scale), Math.floor(y * y_scale)), new Vector4(0, 0, cycle.z, 255));
               placed_pixels = 0;
             break;
           }
           
-        }
         
         pixel_queue -= Math.floor(pixel_queue);
       }
@@ -96,7 +95,7 @@ function load_texture_by_name(name : string) {
   return [texture_width, texture_height, texture_decompressed];
 }
 
-let loaded_texture : any[] = load_texture_by_name('kingpenguin');
+let loaded_texture : any[] = load_texture_by_name('IMG_0178');
 
 console.log(loaded_texture);
 console.log(loaded_texture[2].length);
