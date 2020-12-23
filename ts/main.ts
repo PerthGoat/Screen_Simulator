@@ -1,6 +1,9 @@
+/// <reference path="lzss2.ts" />
 /// <reference path="gfx.ts"/>
 /// <reference path="imgbroker.ts"/>
 /// <reference path="images.ts"/>
+
+declare var TextureHouse : any;
 
 function drawImageOnCanvasRGB(ic : ImageBroker) {
 	
@@ -59,10 +62,10 @@ function drawImageOnCanvasRGB(ic : ImageBroker) {
 }
 
 function updateCanvasRes(val : string) {
-	//canvas.width = Math.pow(2, parseFloat(val));
-	canvas.width = parseFloat(val);
-	//canvas.height = Math.pow(2, parseFloat(val));
-	canvas.height = parseFloat(val);
+	canvas.width = Math.pow(2, parseFloat(val));
+	//canvas.width = parseFloat(val);
+	canvas.height = Math.pow(2, parseFloat(val));
+	//canvas.height = parseFloat(val);
   GraphicsContext.FillCanvas(); // remove the default transparent background
   GraphicsContext.StartDrawing();
 	drawImageOnCanvasRGB(ImageContext);
@@ -72,6 +75,31 @@ function updateTextInput(val : string) {
 	(<HTMLInputElement>document.getElementById("zoomOutputId")).value = val;
 	updateCanvasRes(val);
 }
+
+function load_texture_by_name(name : string) {
+  let full_texture_text : string = TextureHouse[name];
+  
+  let full_texture_text_split : string[] = full_texture_text.split(':');
+  
+  let texture_attributes = full_texture_text_split[0].split('_');
+  
+  if(texture_attributes[2] != 'RGB') {
+    console.error(`Don't know how to use this texture : ${texture_attributes[2]}`);
+    return;
+  }
+  
+  let texture_width = parseFloat(texture_attributes[0]);
+  let texture_height = parseFloat(texture_attributes[1]);
+  
+  let texture_decompressed = DEFLATE2.DECOMPRESS(full_texture_text_split[1]);
+  
+  return [texture_width, texture_height, texture_decompressed];
+}
+
+let loaded_texture : any[] = load_texture_by_name('kingpenguin');
+
+console.log(loaded_texture);
+console.log(loaded_texture[2].length);
 
 let canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("mainCanvas");
 
@@ -83,9 +111,14 @@ GraphicsContext.FillCanvas(); // remove the default transparent background
 
 let imgBlobs : Images = new Images();
 
-let ImageContext : ImageBroker = new ImageBroker(imgBlobs.img1, () => {
+/*let ImageContext : ImageBroker = new ImageBroker(imgBlobs.img1, () => {
   GraphicsContext.StartDrawing();
 	drawImageOnCanvasRGB(ImageContext);
   //let val = (<HTMLInputElement>document.getElementById("zoomOutputId")).value;
   //updateCanvasRes(val);
-});
+});*/
+
+let ImageContext : ImageBroker = new ImageBroker(loaded_texture);
+
+GraphicsContext.StartDrawing();
+drawImageOnCanvasRGB(ImageContext);
