@@ -21,6 +21,10 @@ var gfx = /** @class */ (function () {
     gfx.prototype.ClearCanvas = function () {
         this.myCtx.clearRect(0, 0, this.myCtx.canvas.clientWidth, this.myCtx.canvas.clientHeight);
     };
+    gfx.prototype.FillCanvas = function () {
+        this.myCtx.fillStyle = "rgba(0, 0, 0, 1)";
+        this.myCtx.fillRect(0, 0, this.myCtx.canvas.clientWidth, this.myCtx.canvas.clientHeight);
+    };
     gfx.prototype.StartDrawing = function () {
         this.canvas_image_data = this.myCtx.getImageData(0, 0, this.myCtx.canvas.clientWidth, this.myCtx.canvas.clientHeight);
         this.canvas_image_data_pixels = this.canvas_image_data.data;
@@ -76,7 +80,7 @@ var Images = /** @class */ (function () {
 /// <reference path="imgbroker.ts"/>
 /// <reference path="images.ts"/>
 function drawImageOnCanvasRGB(ic) {
-    GraphicsContext.ClearCanvas();
+    //GraphicsContext.ClearCanvas();
     var size = new Vector2(canvas.clientWidth, canvas.clientHeight);
     // calculate x and y offset in relation to the canvas size
     var ox = ic.width / size.x;
@@ -120,6 +124,7 @@ function updateCanvasRes(val) {
     canvas.width = parseFloat(val);
     //canvas.height = Math.pow(2, parseFloat(val));
     canvas.height = parseFloat(val);
+    GraphicsContext.FillCanvas(); // remove the default transparent background
     GraphicsContext.StartDrawing();
     drawImageOnCanvasRGB(ImageContext);
 }
@@ -130,6 +135,7 @@ function updateTextInput(val) {
 var canvas = document.getElementById("mainCanvas");
 var ctx = canvas.getContext("2d");
 var GraphicsContext = new gfx(ctx);
+GraphicsContext.FillCanvas(); // remove the default transparent background
 var imgBlobs = new Images();
 var ImageContext = new ImageBroker(imgBlobs.img1, function () {
     GraphicsContext.StartDrawing();

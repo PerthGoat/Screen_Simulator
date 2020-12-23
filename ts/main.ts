@@ -4,8 +4,8 @@
 
 function drawImageOnCanvasRGB(ic : ImageBroker) {
 	
-	GraphicsContext.ClearCanvas();
-	
+	//GraphicsContext.ClearCanvas();
+  
 	let size : Vector2 = new Vector2(canvas.clientWidth, canvas.clientHeight);
 	
 	// calculate x and y offset in relation to the canvas size
@@ -63,6 +63,7 @@ function updateCanvasRes(val : string) {
 	canvas.width = parseFloat(val);
 	//canvas.height = Math.pow(2, parseFloat(val));
 	canvas.height = parseFloat(val);
+  GraphicsContext.FillCanvas(); // remove the default transparent background
   GraphicsContext.StartDrawing();
 	drawImageOnCanvasRGB(ImageContext);
 }
@@ -77,6 +78,8 @@ let canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("mai
 let ctx : CanvasRenderingContext2D = canvas.getContext("2d");
 
 let GraphicsContext : gfx = new gfx(ctx);
+
+GraphicsContext.FillCanvas(); // remove the default transparent background
 
 let imgBlobs : Images = new Images();
 

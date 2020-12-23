@@ -25,6 +25,11 @@ class gfx {
 		this.myCtx.clearRect(0, 0, this.myCtx.canvas.clientWidth, this.myCtx.canvas.clientHeight);
 	}
   
+  public FillCanvas() : void {
+    this.myCtx.fillStyle = "rgba(0, 0, 0, 1)";
+		this.myCtx.fillRect(0, 0, this.myCtx.canvas.clientWidth, this.myCtx.canvas.clientHeight);
+  }
+  
   public StartDrawing() : void {
     this.canvas_image_data = this.myCtx.getImageData(0, 0, this.myCtx.canvas.clientWidth, this.myCtx.canvas.clientHeight);
     this.canvas_image_data_pixels = this.canvas_image_data.data;
