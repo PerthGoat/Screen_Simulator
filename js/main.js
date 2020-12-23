@@ -113,7 +113,7 @@ class DEFLATE2 {
     }
 }
 // maximum size for the sliding window to grow to
-DEFLATE2.MAX_WINDOW_SIZE = 128;
+DEFLATE2.MAX_WINDOW_SIZE = 8192;
 class Vector2 {
     constructor(x, y) {
         this.x = x;
@@ -205,6 +205,10 @@ class Images {
 /// <reference path="gfx.ts"/>
 /// <reference path="imgbroker.ts"/>
 /// <reference path="images.ts"/>
+let ImageContext = undefined;
+let canvas = document.getElementById("mainCanvas");
+let ctx = canvas.getContext("2d");
+let GraphicsContext = new gfx(ctx);
 function drawImageOnCanvasRGB(ic) {
     //GraphicsContext.ClearCanvas();
     let size = new Vector2(canvas.clientWidth, canvas.clientHeight);
@@ -213,7 +217,7 @@ function drawImageOnCanvasRGB(ic) {
     let oy = ic.height / size.y;
     let x_scale = 1 / ox; // pixels per cell in the canvas
     let y_scale = 1 / oy; // scale the y to 3x the normal size
-    console.log(x_scale);
+    //console.log(x_scale);
     //console.log(ox, oy);
     //console.log(x_scale, y_scale);
     let pixel_queue = 0;
@@ -270,20 +274,14 @@ function load_texture_by_name(name) {
     let texture_decompressed = DEFLATE2.DECOMPRESS(full_texture_text_split[1]);
     return [texture_width, texture_height, texture_decompressed];
 }
-let loaded_texture = load_texture_by_name('IMG_0178');
-console.log(loaded_texture);
-console.log(loaded_texture[2].length);
-let canvas = document.getElementById("mainCanvas");
-let ctx = canvas.getContext("2d");
-let GraphicsContext = new gfx(ctx);
-GraphicsContext.FillCanvas(); // remove the default transparent background
-let imgBlobs = new Images();
-/*let ImageContext : ImageBroker = new ImageBroker(imgBlobs.img1, () => {
-  GraphicsContext.StartDrawing();
+function display_texture_by_name(name) {
+    let loaded_texture = load_texture_by_name(name);
+    ImageContext = new ImageBroker(loaded_texture);
+    GraphicsContext.FillCanvas(); // remove the default transparent background
+    GraphicsContext.StartDrawing();
     drawImageOnCanvasRGB(ImageContext);
-  //let val = (<HTMLInputElement>document.getElementById("zoomOutputId")).value;
-  //updateCanvasRes(val);
-});*/
-let ImageContext = new ImageBroker(loaded_texture);
-GraphicsContext.StartDrawing();
-drawImageOnCanvasRGB(ImageContext);
+}
+function changeImageSelection(e) {
+    display_texture_by_name(e.value);
+}
+display_texture_by_name('kingpenguin');

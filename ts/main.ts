@@ -4,6 +4,10 @@
 /// <reference path="images.ts"/>
 
 declare var TextureHouse : any;
+let ImageContext : ImageBroker = undefined;
+let canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("mainCanvas");
+let ctx : CanvasRenderingContext2D = canvas.getContext("2d");
+let GraphicsContext : gfx = new gfx(ctx);
 
 function drawImageOnCanvasRGB(ic : ImageBroker) {
 	
@@ -18,7 +22,7 @@ function drawImageOnCanvasRGB(ic : ImageBroker) {
   let x_scale : number = 1/ox; // pixels per cell in the canvas
   let y_scale : number = 1/oy; // scale the y to 3x the normal size
   
-  console.log(x_scale);
+  //console.log(x_scale);
   
   //console.log(ox, oy);
   //console.log(x_scale, y_scale);
@@ -95,29 +99,19 @@ function load_texture_by_name(name : string) {
   return [texture_width, texture_height, texture_decompressed];
 }
 
-let loaded_texture : any[] = load_texture_by_name('IMG_0178');
-
-console.log(loaded_texture);
-console.log(loaded_texture[2].length);
-
-let canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("mainCanvas");
-
-let ctx : CanvasRenderingContext2D = canvas.getContext("2d");
-
-let GraphicsContext : gfx = new gfx(ctx);
-
-GraphicsContext.FillCanvas(); // remove the default transparent background
-
-let imgBlobs : Images = new Images();
-
-/*let ImageContext : ImageBroker = new ImageBroker(imgBlobs.img1, () => {
+function display_texture_by_name(name : string) {
+  let loaded_texture : any[] = load_texture_by_name(name);
+  
+  ImageContext = new ImageBroker(loaded_texture);
+  
+  GraphicsContext.FillCanvas(); // remove the default transparent background
   GraphicsContext.StartDrawing();
-	drawImageOnCanvasRGB(ImageContext);
-  //let val = (<HTMLInputElement>document.getElementById("zoomOutputId")).value;
-  //updateCanvasRes(val);
-});*/
+  drawImageOnCanvasRGB(ImageContext);
+}
 
-let ImageContext : ImageBroker = new ImageBroker(loaded_texture);
+function changeImageSelection(e : any) {
+  display_texture_by_name(e.value);
+}
 
-GraphicsContext.StartDrawing();
-drawImageOnCanvasRGB(ImageContext);
+display_texture_by_name('kingpenguin');
+

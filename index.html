@@ -17,6 +17,14 @@
 	<input type="range" id="canvasZoom" min="1" max="10" value="9" oninput="updateTextInput(this.value);"/>
 	<output name="zoomOutputName" id="zoomOutputId">9</output><br/>
 	<canvas id="mainCanvas" width="512px" height="512px"></canvas>
+  
+  <select onchange='changeImageSelection(this);'>
+    <option>kingpenguin</option>
+    <option>serval_error</option>
+    <option>IMG_0178</option>
+    <option>porn</option>
+  </select>
+  
   <script type='text/javascript'>
     // this block creates an object to hold further initialized textures
     let TextureHouse = {}; // holds references to textures
@@ -24,6 +32,7 @@
 	<script type='text/javascript' src='resources/kingpenguin.js'></script>
 	<script type='text/javascript' src='resources/serval_error.js'></script>
 	<script type='text/javascript' src='resources/IMG_0178.js'></script>
+	<script type='text/javascript' src='resources/porn.js'></script>
 	<script type='text/javascript' src='js/main.js'></script>
 </body>
 </html>
